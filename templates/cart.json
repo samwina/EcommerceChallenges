@@ -7,6 +7,13 @@
         "padding_bottom": 36
       }
     },
+    "cart-drawer": {
+      "type": "cart-drawer",
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
     "cart-footer": {
       "type": "main-cart-footer",
       "blocks": {
@@ -55,6 +62,7 @@
   },
   "order": [
     "cart-items",
+    "cart-drawer",
     "cart-footer",
     "featured-collection"
   ]

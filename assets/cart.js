@@ -16,7 +16,6 @@ class CartItems extends HTMLElement {
   constructor() {
     super();
     this.lineItemStatusElement = document.getElementById('shopping-cart-line-item-status') || document.getElementById('CartDrawer-LineItemStatus');
-
     const debouncedOnChange = debounce((event) => {
       this.onChange(event);
     }, ON_CHANGE_DEBOUNCE_TIMER);
@@ -45,6 +44,7 @@ class CartItems extends HTMLElement {
     this.updateQuantity(event.target.dataset.index, event.target.value, document.activeElement.getAttribute('name'));
   }
 
+  // for cart-drawer
   onCartUpdate() {
     fetch('/cart?section_id=main-cart-items')
       .then((response) => response.text())
@@ -52,9 +52,23 @@ class CartItems extends HTMLElement {
         const html = new DOMParser().parseFromString(responseText, 'text/html');
         const sourceQty = html.querySelector('cart-items');
         this.innerHTML = sourceQty.innerHTML;
+        
+        const pdtVariants = getProductVariants();
+        const upsellProductId = 45093167857985
+        const isUpsellItemInCart = pdtVariants.includes(""+upsellProductId)
+        //const isTrialElementInCart = isElementInDom('a.cart-item__name[href="/products/trial?variant=45093167857985"]');
+        //alert('is in cart is '+ isTrialElementInCart); // Output: true
+        const upsellSection = document.getElementById('upsell-section')
+        const upsellButton = document.getElementById('upsell_button')
+        if(isUpsellItemInCart){
+          upsellSection.style.display = 'none'
+        }else{
+          upsellSection.style.display = 'block'
+        }
+
       })
       .catch(e => {
-        console.error(e);
+        console.error('cart update error',e);
       });
   }
 
@@ -210,3 +224,61 @@ if (!customElements.get('cart-note')) {
       }
   });
 };
+
+function addToCart(productId, quantity, productUrl) {  
+    //handle trial product submission
+    const config = fetchConfig('javascript');
+    config.headers['X-Requested-With'] = 'XMLHttpRequest';
+    delete config.headers['Content-Type'];
+
+    cart = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
+    const formData = new FormData();
+    if (cart) {
+        formData.append('sections', cart.getSectionsToRender().map((section) => section.id));
+        formData.append('sections_url', productUrl);
+        formData.append('quantity', quantity)
+        formData.append('form_type', 'product')
+        formData.append('id',productId)
+        cart.setActiveElement(document.activeElement);
+    }
+
+    config.body = formData;
+
+    fetch(`${routes.cart_add_url}`, config)
+    .then((response) => response.json())
+    .then((response) => {
+      if (response.status) {
+        console.error('We have an error with trial pdt submission')
+      } else if (!cart) {
+        window.location = window.routes.cart_url;
+        return;
+      }
+      publish(PUB_SUB_EVENTS.cartUpdate, {source: 'product-form'});
+      cart.renderContents(response);
+    })
+    .catch((e) => {
+      console.error(e);
+    })
+
+}
+
+function isElementInDom(selector) {
+  return document.querySelector(selector) !== null;
+}
+
+
+function getProductVariants() {
+  const variants = [];
+  const cartItems = document.querySelectorAll('.cart-item');
+  cartItems.forEach((cartItem) => {
+    const variantLink = cartItem.querySelector('.cart-item__link');
+    if (variantLink) {
+      const variantUrl = variantLink.href;
+      const match = variantUrl.match(/variant=(\d+)/);
+      if (match && match[1]) {
+        variants.push(match[1]);
+      }
+    }
+  });
+  return variants;
+}

@@ -1,1 +1,40 @@
-{%- render 'cart-drawer' -%}
+
+{% assign upsell_headline = section.settings.upsell_headline %}
+{% assign product = all_products[section.settings.product] %}
+
+{%- render 'cart-drawer', upsell_headline : upsell_headline, product: product  -%}
+
+
+{% if section.settings.product != blank %}
+  {% assign product = all_products[section.settings.product] %}
+
+  {% if product %}
+    <p>{{ product.title }} - {{ product.price }}</p>
+  {% else %}
+   <p> No product, or invalid product, selected.</p>
+  {% endif %}
+{% else %}
+Nada
+{%endif%}
+
+
+{% schema %}
+{
+  "name": "Upsell Product",
+  "tag": "section",
+  "settings": [
+    {
+        "type":"text",
+        "id":"upsell_headline",
+        "label":"upsell_headline",
+        "default":"Add this upsell product"
+    },
+    {
+      "type": "product",
+      "id": "upsell_product",
+      "label": "Add upsell product"
+    }
+  ]
+}
+{% endschema %}
+

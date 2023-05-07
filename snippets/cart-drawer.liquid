@@ -350,6 +350,12 @@
           <div id="CartDrawer-CartErrors" role="alert"></div>
         </form>
       </cart-drawer-items>
+      <div id="upsell-section">
+        <h1 style="margin-bottom:5px; font-size:16px">Title: {%if upsell_headline%}{{upsell_headline}}{%endif%}</h1>
+        <img src="//cdn.shopify.com/s/files/1/0747/8276/9473/files/about_4.jpg?v=1683471158&amp;width=300" width="150" height="101">            
+        <p>Price :{{product.price}} </p>
+        <button id="upsell_button" class="button" onclick="addToCart(45093167857985, 1,'/products/trial')">Add upsell to cart</button>
+      </div>
       <div class="drawer__footer">
         {%- if settings.show_cart_note -%}
           <details id="Details-CartDrawer">
