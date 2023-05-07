@@ -2993,3 +2993,18 @@ details-disclosure > details {
     outline: transparent solid 1px;
   }
 }
+
+.video-desktop {
+ display: block;
+}
+.video-mobile {
+  display: none;
+ }
+@media only screen and (max-width: 600px) {
+ .video-desktop {
+ display: none;
+ }
+.video-mobile {
+display: block;
+ }
+}
