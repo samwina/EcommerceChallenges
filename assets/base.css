@@ -2994,6 +2994,7 @@ details-disclosure > details {
   }
 }
 
+/* video banner styling */
 .video-desktop {
  display: block;
 }
@@ -3007,4 +3008,11 @@ details-disclosure > details {
 .video-mobile {
 display: block;
  }
+}
+
+/* coundown section styling */
+.countdown-section{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

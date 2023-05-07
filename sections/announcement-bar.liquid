@@ -19,8 +19,41 @@
           {%- endif -%}
         {%- endif -%}
       </div>
+    {%- when 'countdown' -%}
+      <div class="countdown-section">
+        {%if block.settings.text%}
+         <span>{{block.settings.text}}&nbsp</span> <span id="constant-date"></span>  
+        {%endif%}
+      </div> 
+        
+      <script>
+        var countDownDate = new Date("{{block.settings.countdown}}").getTime();
+       
+       console.log("what ?", isNaN(countDownDate));
+       if(isNaN(countDownDate)){
+         document.getElementById("constant-date").innerHTML="enter sth"
+         document.getElementById("countdown-timer").innerHTML = "enter sth";
+       }else{
+          
+        var now = new Date().getTime();
+          var distance = countDownDate - now;
+          var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+          if (days < 0){
+            alert("Only enter future dates, not past one")
+          }else{
+             document.getElementById("constant-date").innerHTML = days + "d " + hours + "h "
+          + minutes + "m " + seconds + "s ";
+          }
+         
+       }
+       
+      </script>
   {%- endcase -%}
 {%- endfor -%}
+
 
 {% schema %}
 {
@@ -90,6 +123,23 @@
           "type": "url",
           "id": "link",
           "label": "t:sections.announcement-bar.blocks.announcement.settings.link.label"
+        }
+      ]
+    },
+    {
+      "type": "countdown",
+      "name": "countdown-date",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "default": "Sales ends in",
+          "label": "custom text"
+        },
+        {
+          "type": "text",
+          "id": "countdown",
+          "label": "Input date like in the bracket(Dec 25, 2023 23:59:00 GMT+0700)"
         }
       ]
     }
